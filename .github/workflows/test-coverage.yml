@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Tests with Coverage
         run: |
-          npm test -- --coverage > coverage.txt
+          npm test -- --coverage --coverageReporters=text-summary > coverage.txt
 
       - name: Output Coverage to Console
         run: cat coverage.txt
