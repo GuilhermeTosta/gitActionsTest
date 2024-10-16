@@ -1,0 +1,46 @@
+name: Run Tests and Comment Coverage on PR
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+      - staging
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests with Coverage
+        run: |
+          npm test -- --coverage --coverageReporters=text-summary > rawCoverage.txt
+
+      - name: Edit Coverage file
+        # remove first 4 lines and add '> ' to line
+        run: sed '1,4d; s/^/> /' rawCoverage.txt > coverage.txt
+
+      - name: Comment on PR with Coverage
+        if: github.event_name == 'pull_request'
+        run: |
+          COVERAGE=$(cat coverage.txt)
+          COMMENT=$(jq -n --arg body "FE Test Coverage Report $COVERAGE <br/>" '{body: $body}')
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$COMMENT" \
+            "${{ github.event.pull_request.comments_url }}"
