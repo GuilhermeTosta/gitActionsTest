@@ -28,16 +28,17 @@ jobs:
 
       - name: Run Tests with Coverage
         run: |
-          npm test -- --coverage --coverageReporters=text-summary > coverage.txt
+          npm test -- --coverage --coverageReporters=text-summary > rawCoverage.txt
 
-      - name: Output Coverage to Console
-        run: cat coverage.txt
+      - name: Edit Coverage file
+        # remove first 4 lines and add '> ' to line
+        run: sed '1,4d; s/^/> /' rawCoverage.txt > coverage.txt
 
       - name: Comment on PR with Coverage
         if: github.event_name == 'pull_request'
         run: |
           COVERAGE=$(cat coverage.txt)
-          COMMENT=$(jq -n --arg body "### FE Test Coverage Report > $COVERAGE" '{body: $body}')
+          COMMENT=$(jq -n --arg body "### FE Test Coverage Report $COVERAGE" '{body: $body}')
           curl -s -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
