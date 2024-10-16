@@ -35,11 +35,11 @@ jobs:
 
       - name: Comment on PR with Coverage
         if: github.event_name == 'pull_request'
-        run: |
+ run: |
           COVERAGE=$(cat coverage.txt)
-          COMMENT="### Jest Test Coverage Report\n\`\`\`\n$COVERAGE\n\`\`\`"
+          COMMENT=$(jq -n --arg body "### Jest Test Coverage Report\n\`\`\`\n$COVERAGE\n\`\`\`" '{body: $body}')
           curl -s -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\":\"$COMMENT\"}" \
+            -d "$COMMENT" \
             "${{ github.event.pull_request.comments_url }}"
