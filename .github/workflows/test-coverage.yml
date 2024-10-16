@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Tests with Coverage
         run: |
-          npm test -- --coverage --coverageReporters=text-summary > coverage.txt
+          npm test -- --coverage > coverage.txt
 
       - name: Output Coverage to Console
         run: cat coverage.txt
@@ -37,7 +37,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           COVERAGE=$(cat coverage.txt)
-          COMMENT=$(jq -n --arg body "### Jest Test Coverage Report\n\`\`\`\n$COVERAGE\n\`\`\`" '{body: $body}')
+          COMMENT=$(jq -n --arg body "### Jest Test Coverage Report $COVERAGE" '{body: $body}')
           curl -s -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
