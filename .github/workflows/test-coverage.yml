@@ -8,7 +8,7 @@ on:
       - staging
 
 jobs:
-  test:
+  test-coverage:
     runs-on: ubuntu-latest
 
     permissions:
