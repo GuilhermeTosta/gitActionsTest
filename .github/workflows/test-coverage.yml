@@ -37,7 +37,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           COVERAGE=$(cat coverage.txt)
-          COMMENT=$(jq -n --arg body "### Jest FE Test Coverage Report \`\`\` $COVERAGE \`\`\`" '{body: $body}')
+          COMMENT=$(jq -n --arg body "### Jest FE Test Coverage Report /`/`/` $COVERAGE /`/`/`" '{body: $body}')
           curl -s -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
